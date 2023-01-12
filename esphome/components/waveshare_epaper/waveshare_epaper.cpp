@@ -481,6 +481,7 @@ uint32_t WaveshareEPaperTypeA::idle_timeout_() {
  };
 
 void WaveshareEPaper2P66In::initialize() {
+  ESP_LOGD(TAG, "initialize");
   // command power setting
   this->wait_until_idle_();
   this->command(0x12); // Software reset
@@ -525,11 +526,13 @@ void WaveshareEPaper2P66In::initialize() {
   this->data(0x00);
   this->data(0x32);
   // Load LUT
-  // this->command(0x32);
-  // for (uint8_t i : LUT_2_66) // 153 btes
-  //   this->data(i);
+  this->command(0x32);
+  for (uint8_t i : LUT_WF_PARTIAL_2_66) // 153 btes
+    this->data(i);
 }
 void HOT WaveshareEPaper2P66In::display() {
+  ESP_LOGD(TAG, "display");
+
   uint32_t buf_len = this->get_buffer_length_(); // should be 5624 bytes
 
   // Set Ram X address counter
