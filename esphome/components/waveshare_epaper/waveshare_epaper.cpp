@@ -604,7 +604,7 @@ void HOT WaveshareEPaper2P66In::display() {
   }
 
   // Image update
-  if(!partial) {
+  if(partial) {
     this->command(0x22);
     // this->data(0xc7); // or 0xcf
     this->data(0xcf);
