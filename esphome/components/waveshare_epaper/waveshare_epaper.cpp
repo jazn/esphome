@@ -453,6 +453,125 @@ uint32_t WaveshareEPaperTypeA::idle_timeout_() {
 }
 
 // ========================================================
+//                          2.66 inch from waveshare
+// ========================================================
+// Links:
+// - https://www.waveshare.com/product/2.66inch-e-paper.htm
+// - https://www.waveshare.com/wiki/2.66inch_e-Paper_Module_Manual#Overview
+// - https://www.waveshare.com/w/upload/d/dc/2.66inch-e-paper-specification.pdf
+// - https://github.com/waveshare/e-Paper/tree/master/Arduino
+
+ static const uint8_t LUT_WF_PARTIAL_2_66[153] = {
+     0x00,0x40,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x80,0x80,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x40,0x40,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x80,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x0A,0x00,0x00,0x00,0x00,0x00,0x02,0x01,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x01,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x22,0x22,0x22,0x22,0x22,0x22,
+    0x00,0x00,0x00 // this was in https://github.com/waveshare/e-Paper/blob/master/Arduino/epd2in66/epd2in66.cpp ,0x22,0x17,0x41,0xB0,0x32,0x36,
+ };
+
+void WaveshareEPaper2P66In::initialize() {
+  // command power setting
+  this->wait_until_idle_();
+  this->command(0x12); // Software reset
+  this->wait_until_idle_(); // Wait for busy low
+
+  // Set display size and driver output control
+  this->command(0x01);
+  this->data(0x27);
+  this->data(0x01);
+  this->data(0x00);
+
+  // Ram data entry mode
+  this->command(0x11);
+  this->data(0x01);
+
+  // Set Ram X address
+  this->command(0x44);
+  this->data(0x00);
+  this->data(0x12);
+
+  // Set Ram Y address
+  this->command(0x45);
+  this->data(0x27);
+  this->data(0x01);
+  this->data(0x00);
+  this->data(0x00);
+
+  // Set border
+  this->command(0x3c);
+  this->data(0x05);
+
+  // SET VOLTAGE AND LOAD LUT
+  // Set VCOM value
+  this->command(0x2c);
+  this->data(0x36);
+  // Gate voltage setting
+  this->command(0x03);
+  this->data(0x17);
+  // Source voltage setting
+  this->command(0x04);
+  this->data(0x41);
+  this->data(0x00);
+  this->data(0x32);
+  // Load LUT
+  // this->command(0x32);
+  // for (uint8_t i : LUT_2_66) // 153 btes
+  //   this->data(i);
+}
+void HOT WaveshareEPaper2P66In::display() {
+  uint32_t buf_len = this->get_buffer_length_(); // should be 5624 bytes
+
+  // Set Ram X address counter
+  this->command(0x4e);
+  this->data(0x00);
+
+  // Set Ram Y address counter
+  this->command(0x4f);
+  this->data(0x27);
+  this->data(0x00);
+
+  // Load BW image (152/8*296)(BW)
+  this->command(0x24);
+  // delay(2);
+  for (uint32_t i = 0; i < buf_len; i++) {
+    this->data(this->buffer_[i]);
+  }
+
+  // Image update
+  this->command(0x22);
+  this->data(0xc7);
+  this->command(0x20);
+  
+  this->wait_until_idle_(); // Wait for busy low
+
+  // // Enter deep sleep mode
+  // this->command(0x10);
+  // this->data(0x01);
+}
+
+int WaveshareEPaper2P66In::get_width_internal() { return 176; }
+int WaveshareEPaper2P66In::get_height_internal() { return 264; }
+void WaveshareEPaper2P66In::dump_config() {
+  LOG_DISPLAY("", "Waveshare E-Paper", this);
+  ESP_LOGCONFIG(TAG, "  Model: 2.66in");
+  LOG_PIN("  Reset Pin: ", this->reset_pin_);
+  LOG_PIN("  DC Pin: ", this->dc_pin_);
+  LOG_PIN("  Busy Pin: ", this->busy_pin_);
+  LOG_UPDATE_INTERVAL(this);
+}
+
+// ========================================================
 //                          Type B
 // ========================================================
 // Datasheet:

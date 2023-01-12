@@ -130,6 +130,26 @@ enum WaveshareEPaperTypeBModel {
   WAVESHARE_EPAPER_7_5_IN_B_V2,
 };
 
+class WaveshareEPaper2P66In : public WaveshareEPaper {
+ public:
+  void initialize() override;
+
+  void display() override;
+
+  void dump_config() override;
+
+  void deep_sleep() override {
+    // COMMAND DEEP SLEEP
+    this->command(0x10);
+    this->data(0x01);  // check byte
+  }
+
+ protected:
+  int get_width_internal() override;
+
+  int get_height_internal() override;
+};
+
 class WaveshareEPaper2P7In : public WaveshareEPaper {
  public:
   void initialize() override;
