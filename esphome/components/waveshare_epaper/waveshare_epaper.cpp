@@ -479,16 +479,16 @@ uint32_t WaveshareEPaperTypeA::idle_timeout_() {
     0x00,0x00,0x00,0x00,0x22,0x22,0x22,0x22,0x22,0x22,
     0x00,0x00,0x00 // this was in https://github.com/waveshare/e-Paper/blob/master/Arduino/epd2in66/epd2in66.cpp ,0x22,0x17,0x41,0xB0,0x32,0x36,
  };
-  void WaveshareEPaper::reset_() {
-  ESP_LOGD(TAG, "reset_");
+void WaveshareEPaper::reset_() {
+ESP_LOGD(TAG, "reset_");
 
-    if (this->reset_pin_ != nullptr) {
-      this->reset_pin_->digital_write(false);
-      delay(reset_duration_);  // NOLINT
-      this->reset_pin_->digital_write(true);
-      delay(200);  // NOLINT
-    }
+  if (this->reset_pin_ != nullptr) {
+    this->reset_pin_->digital_write(false);
+    delay(reset_duration_);  // NOLINT
+    this->reset_pin_->digital_write(true);
+    delay(200);  // NOLINT
   }
+}
 
 void WaveshareEPaper2P66In::initialize() {
   ESP_LOGD(TAG, "initialize");
@@ -584,6 +584,13 @@ void WaveshareEPaper2P66In::dump_config() {
   LOG_PIN("  DC Pin: ", this->dc_pin_);
   LOG_PIN("  Busy Pin: ", this->busy_pin_);
   LOG_UPDATE_INTERVAL(this);
+}
+void WaveshareEPaper2P66In::deep_sleep() {
+  ESP_LOGD(TAG, "deep_sleep");
+
+  // Enter deep sleep mode
+  this->command(0x10);
+  this->data(0x01);  // check byte
 }
 
 // ========================================================

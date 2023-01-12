@@ -131,11 +131,7 @@ class WaveshareEPaper2P66In : public WaveshareEPaper {
 
   void dump_config() override;
 
-  void deep_sleep() override {
-    // Enter deep sleep mode
-    this->command(0x10);
-    this->data(0x01);  // check byte
-  }
+  void deep_sleep() override;
 
  protected:
   int get_width_internal() override;
