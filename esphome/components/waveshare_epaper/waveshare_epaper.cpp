@@ -579,6 +579,7 @@ void HOT WaveshareEPaper2P66In::display() {
   // Image update
   if(no_of_refreshes > 5) {
     no_of_refreshes = 0;
+  }else{
     this->command(0x22);
     this->data(0xc7); // or 0xcf
   }
