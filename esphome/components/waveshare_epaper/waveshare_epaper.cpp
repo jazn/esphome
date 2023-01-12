@@ -505,7 +505,7 @@ void WaveshareEPaper2P66In::initialize() {
 
   // Ram data entry mode
   this->command(0x11);
-  this->data(0x01);// 0x03
+  this->data(0x03);
 
   // Set Ram X address
   this->command(0x44);
@@ -514,10 +514,10 @@ void WaveshareEPaper2P66In::initialize() {
 
   // Set Ram Y address
   this->command(0x45);
+  this->data(0x00);
+  this->data(0x00);
   this->data(0x27);
   this->data(0x01);
-  this->data(0x00);
-  this->data(0x00);
 
   // Set border
   this->command(0x3c);
@@ -545,7 +545,7 @@ void HOT WaveshareEPaper2P66In::display() {
   ESP_LOGD(TAG, "display");
 
   uint32_t buf_len = this->get_buffer_length_(); // should be 5624 bytes
-  ESP_LOGD(TAG, "buf_len:", buf_len);
+  ESP_LOGD(TAG, "buf_len: %d", buf_len);
 
   // Set Ram X address counter
   this->command(0x4e);
@@ -554,7 +554,7 @@ void HOT WaveshareEPaper2P66In::display() {
   // Set Ram Y address counter
   this->command(0x4f);
   this->data(0x27);
-  this->data(0x00);
+  this->data(0x01);
 
   // Load BW image (152/8*296)(BW)
   this->command(0x24);
@@ -575,8 +575,8 @@ void HOT WaveshareEPaper2P66In::display() {
   // this->data(0x01);
 }
 
-int WaveshareEPaper2P66In::get_width_internal() { return 176; }
-int WaveshareEPaper2P66In::get_height_internal() { return 264; }
+int WaveshareEPaper2P66In::get_width_internal() { return 296; }
+int WaveshareEPaper2P66In::get_height_internal() { return 152; }
 void WaveshareEPaper2P66In::dump_config() {
   LOG_DISPLAY("", "Waveshare E-Paper @Jazn", this);
   ESP_LOGCONFIG(TAG, "  Model: 2.66in");
