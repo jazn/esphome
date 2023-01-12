@@ -45,16 +45,7 @@ class WaveshareEPaper : public PollingComponent,
 
   void setup_pins_();
 
-  void reset_() {
-    ESP_LOGD("waveshare_epaper", "reset");
-
-    if (this->reset_pin_ != nullptr) {
-      this->reset_pin_->digital_write(false);
-      delay(reset_duration_);  // NOLINT
-      this->reset_pin_->digital_write(true);
-      delay(200);  // NOLINT
-    }
-  }
+  void reset_();
 
   uint32_t get_buffer_length_();
   uint32_t reset_duration_{200};
