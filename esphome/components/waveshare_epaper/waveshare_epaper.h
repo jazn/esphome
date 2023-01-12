@@ -60,7 +60,7 @@ class WaveshareEPaper : public PollingComponent,
   GPIOPin *reset_pin_{nullptr};
   GPIOPin *dc_pin_;
   GPIOPin *busy_pin_{nullptr};
-  virtual uint32_t idle_timeout_() { return 1000u; }  // NOLINT(readability-identifier-naming)
+  virtual uint32_t idle_timeout_() { return 1000000u; }  // NOLINT(readability-identifier-naming)
 };
 
 enum WaveshareEPaperTypeAModel {

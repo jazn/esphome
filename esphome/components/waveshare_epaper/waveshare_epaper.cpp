@@ -480,7 +480,7 @@ uint32_t WaveshareEPaperTypeA::idle_timeout_() {
     0x00,0x00,0x00 // this was in https://github.com/waveshare/e-Paper/blob/master/Arduino/epd2in66/epd2in66.cpp ,0x22,0x17,0x41,0xB0,0x32,0x36,
  };
 void WaveshareEPaper::reset_() {
-ESP_LOGD(TAG, "reset_");
+  ESP_LOGD(TAG, "reset_");
 
   if (this->reset_pin_ != nullptr) {
     this->reset_pin_->digital_write(false);
@@ -494,7 +494,15 @@ void WaveshareEPaper2P66In::initialize() {
 }
 void HOT WaveshareEPaper2P66In::display() {
 
-    ESP_LOGD(TAG, "initialize");
+  ESP_LOGD(TAG, "reset_");
+  if (this->reset_pin_ != nullptr) {
+    this->reset_pin_->digital_write(false);
+    delay(200);  // NOLINT
+    this->reset_pin_->digital_write(true);
+    delay(200);  // NOLINT
+  }
+
+  ESP_LOGD(TAG, "initialize");
   // command power setting
   this->wait_until_idle_();
   this->command(0x12); // Software reset
