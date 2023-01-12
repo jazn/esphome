@@ -555,7 +555,7 @@ void HOT WaveshareEPaper2P66In::display() {
   this->wait_until_idle_(); // Wait for busy low
 
 
-  ESP_LOGD(TAG, "display");
+  ESP_LOGD(TAG, "display no_of_refreshes: %d", no_of_refreshes);
 
   uint32_t buf_len = this->get_buffer_length_(); // should be 5624 bytes
   ESP_LOGD(TAG, "buf_len: %d", buf_len);
@@ -745,7 +745,7 @@ void HOT WaveshareEPaper2P7In::display() {
   // COMMAND DATA START TRANSMISSION 2
   this->command(0x13);
   delay(2);
-  for (uint32_t i = 0; i < buf_len; i++) {
+  for (uint32_t i = 0; i < buf_len-1900; i++) {
     this->data(this->buffer_[i]);
   }
 
