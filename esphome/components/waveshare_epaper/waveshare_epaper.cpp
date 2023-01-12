@@ -576,7 +576,7 @@ void HOT WaveshareEPaper2P66In::display() {
 
   // Image update
   this->command(0x22);
-  this->data(0xc7);
+  this->data(0xcf);
   this->command(0x20);
   
   this->wait_until_idle_(); // Wait for busy low
