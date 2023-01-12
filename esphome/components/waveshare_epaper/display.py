@@ -23,6 +23,9 @@ WaveshareEPaper = waveshare_epaper_ns.class_(
 WaveshareEPaperTypeA = waveshare_epaper_ns.class_(
     "WaveshareEPaperTypeA", WaveshareEPaper
 )
+WaveshareEPaper2P66In = waveshare_epaper_ns.class_(
+    "WaveshareEPaper2P66In", WaveshareEPaper
+)
 WaveshareEPaper2P7In = waveshare_epaper_ns.class_(
     "WaveshareEPaper2P7In", WaveshareEPaper
 )
@@ -73,6 +76,7 @@ MODELS = {
     "2.13in-ttgo-b74": ("a", WaveshareEPaperTypeAModel.TTGO_EPAPER_2_13_IN_B74),
     "2.90in": ("a", WaveshareEPaperTypeAModel.WAVESHARE_EPAPER_2_9_IN),
     "2.90inv2": ("a", WaveshareEPaperTypeAModel.WAVESHARE_EPAPER_2_9_IN_V2),
+    "2.66in": ("b", WaveshareEPaper2P66In),
     "2.70in": ("b", WaveshareEPaper2P7In),
     "2.90in-b": ("b", WaveshareEPaper2P9InB),
     "4.20in": ("b", WaveshareEPaper4P2In),
