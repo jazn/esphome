@@ -504,17 +504,25 @@ void HOT WaveshareEPaper2P66In::display() {
     delay(200);  // NOLINT
   }
 
+  const int full_refresh_after = 5;
+  bool partial = no_of_refreshes <= full_refresh_after;
+  if(no_of_refreshes > full_refresh_after) {
+    no_of_refreshes = 0;
+  }
+
   ESP_LOGD(TAG, "initialize");
   // command power setting
   this->wait_until_idle_();
   this->command(0x12); // Software reset
   this->wait_until_idle_(); // Wait for busy low
 
-  // Set display size and driver output control
-  this->command(0x01);
-  this->data(0x27);
-  this->data(0x01);
-  this->data(0x00);
+  if(partial) {
+    // Set display size and driver output control
+    this->command(0x01);
+    this->data(0x27);
+    this->data(0x01);
+    this->data(0x00);
+  }
 
   // Ram data entry mode
   this->command(0x11);
@@ -522,43 +530,62 @@ void HOT WaveshareEPaper2P66In::display() {
 
   // Set Ram X address
   this->command(0x44);
-  this->data(0x00);
-  this->data(0x12);
+  // this->data(0x00);
+  // this->data(0x12);
+  this->data(0x01);
+  this->data((width_ % 8 == 0)? (width_ / 8 ): (width_ / 8 + 1));
 
   // Set Ram Y address
   this->command(0x45);
   this->data(0x00);
   this->data(0x00);
-  this->data(0x27);
-  this->data(0x01);
+  // this->data(0x27);
+  // this->data(0x01);
+  this->data((height_&0xff));
+  this->data((height_&0x100)>>8);
 
-  // Set border
-  this->command(0x3c);
-  this->data(0x05);
+  if(partial) {
+    // Set border
+    this->command(0x3c);
+    // this->data(0x05);
+    this->data(0x80);
 
-  // SET VOLTAGE AND LOAD LUT
-  // Set VCOM value
-  this->command(0x2c);
-  this->data(0x36);
-  // Gate voltage setting
-  this->command(0x03);
-  this->data(0x17);
-  // Source voltage setting
-  this->command(0x04);
-  this->data(0x41);
-  this->data(0x00);
-  this->data(0x32);
-  // Load LUT
-  this->command(0x32);
-  for (uint8_t i : LUT_WF_PARTIAL_2_66) // 153 btes
-    this->data(i);
-  this->wait_until_idle_(); // Wait for busy low
+    // SET VOLTAGE AND LOAD LUT
+    // Set VCOM value
+    this->command(0x2c);
+    this->data(0x36);
+    // Gate voltage setting
+    this->command(0x03);
+    this->data(0x17);
+    // Source voltage setting
+    this->command(0x04);
+    this->data(0x41);
+    this->data(0x00);
+    this->data(0x32);
+    // Load LUT
+    this->command(0x32);
+    for (uint8_t i : LUT_WF_PARTIAL_2_66) // 153 btes
+      this->data(i);
 
+    this->command(0x37);
+    this->data(0x00);
+    this->data(0x00);
+    this->data(0x00);
+    this->data(0x00);
+    this->data(0x00);
+    this->data(0x40);
+    this->data(0x00);
+    this->data(0x00);
+    this->data(0x00);
+    this->data(0x00);
+  }
 
   ESP_LOGD(TAG, "display no_of_refreshes: %d", no_of_refreshes);
 
   uint32_t buf_len = this->get_buffer_length_(); // should be 5624 bytes
   ESP_LOGD(TAG, "buf_len: %d", buf_len);
+
+  this->wait_until_idle_(); // Wait for busy low
 
   // Set Ram X address counter
   this->command(0x4e);
@@ -577,11 +604,10 @@ void HOT WaveshareEPaper2P66In::display() {
   }
 
   // Image update
-  if(no_of_refreshes > 5) {
-    no_of_refreshes = 0;
-  }else{
+  if(!partial) {
     this->command(0x22);
-    this->data(0xc7); // or 0xcf
+    // this->data(0xc7); // or 0xcf
+    this->data(0xcf);
   }
   this->command(0x20);
   
@@ -596,8 +622,8 @@ void HOT WaveshareEPaper2P66In::display() {
   ++no_of_refreshes;
 }
 
-int WaveshareEPaper2P66In::get_width_internal() { return 152; }
-int WaveshareEPaper2P66In::get_height_internal() { return 296; }
+int WaveshareEPaper2P66In::get_width_internal() { return width_; }
+int WaveshareEPaper2P66In::get_height_internal() { return height_; }
 void WaveshareEPaper2P66In::dump_config() {
   LOG_DISPLAY("", "Waveshare E-Paper @Jazn", this);
   ESP_LOGCONFIG(TAG, "  Model: 2.66in");

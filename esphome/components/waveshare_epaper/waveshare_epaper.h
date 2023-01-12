@@ -139,6 +139,8 @@ class WaveshareEPaper2P66In : public WaveshareEPaper {
   int get_height_internal() override;
 
   int no_of_refreshes = 0;
+  const int width_ = 152;
+  const int height_ = 296;
 };
 
 class WaveshareEPaper2P7In : public WaveshareEPaper {
