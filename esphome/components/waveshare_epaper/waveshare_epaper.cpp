@@ -491,7 +491,10 @@ ESP_LOGD(TAG, "reset_");
 }
 
 void WaveshareEPaper2P66In::initialize() {
-  ESP_LOGD(TAG, "initialize");
+}
+void HOT WaveshareEPaper2P66In::display() {
+
+    ESP_LOGD(TAG, "initialize");
   // command power setting
   this->wait_until_idle_();
   this->command(0x12); // Software reset
@@ -540,8 +543,8 @@ void WaveshareEPaper2P66In::initialize() {
   for (uint8_t i : LUT_WF_PARTIAL_2_66) // 153 btes
     this->data(i);
   this->wait_until_idle_(); // Wait for busy low
-}
-void HOT WaveshareEPaper2P66In::display() {
+
+
   ESP_LOGD(TAG, "display");
 
   uint32_t buf_len = this->get_buffer_length_(); // should be 5624 bytes
@@ -570,9 +573,11 @@ void HOT WaveshareEPaper2P66In::display() {
   
   this->wait_until_idle_(); // Wait for busy low
 
-  // // Enter deep sleep mode
-  // this->command(0x10);
-  // this->data(0x01);
+  ESP_LOGD(TAG, "deep_sleep");
+
+  // Enter deep sleep mode
+  this->command(0x10);
+  this->data(0x01);  // check byte
 }
 
 int WaveshareEPaper2P66In::get_width_internal() { return 152; }
