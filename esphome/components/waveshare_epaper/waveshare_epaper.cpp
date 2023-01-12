@@ -575,8 +575,11 @@ void HOT WaveshareEPaper2P66In::display() {
   }
 
   // Image update
-  this->command(0x22);
-  this->data(0xcf);
+  if(no_of_refreshes > 5) {
+    no_of_refreshes = 0;
+    this->command(0x22);
+    this->data(0xc7); // or 0xcf
+  }
   this->command(0x20);
   
   this->wait_until_idle_(); // Wait for busy low
@@ -586,6 +589,8 @@ void HOT WaveshareEPaper2P66In::display() {
   // Enter deep sleep mode
   this->command(0x10);
   this->data(0x01);  // check byte
+
+  ++no_of_refreshes;
 }
 
 int WaveshareEPaper2P66In::get_width_internal() { return 152; }
