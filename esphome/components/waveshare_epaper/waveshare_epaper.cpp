@@ -495,7 +495,7 @@ void WaveshareEPaper2P66In::initialize() {
 
   // Ram data entry mode
   this->command(0x11);
-  this->data(0x01);
+  this->data(0x01);// 0x03
 
   // Set Ram X address
   this->command(0x44);
@@ -529,11 +529,13 @@ void WaveshareEPaper2P66In::initialize() {
   this->command(0x32);
   for (uint8_t i : LUT_WF_PARTIAL_2_66) // 153 btes
     this->data(i);
+  this->wait_until_idle_(); // Wait for busy low
 }
 void HOT WaveshareEPaper2P66In::display() {
   ESP_LOGD(TAG, "display");
 
   uint32_t buf_len = this->get_buffer_length_(); // should be 5624 bytes
+  ESP_LOGD(TAG, "buf_len:", buf_len);
 
   // Set Ram X address counter
   this->command(0x4e);
@@ -566,7 +568,7 @@ void HOT WaveshareEPaper2P66In::display() {
 int WaveshareEPaper2P66In::get_width_internal() { return 176; }
 int WaveshareEPaper2P66In::get_height_internal() { return 264; }
 void WaveshareEPaper2P66In::dump_config() {
-  LOG_DISPLAY("", "Waveshare E-Paper", this);
+  LOG_DISPLAY("", "Waveshare E-Paper @Jazn", this);
   ESP_LOGCONFIG(TAG, "  Model: 2.66in");
   LOG_PIN("  Reset Pin: ", this->reset_pin_);
   LOG_PIN("  DC Pin: ", this->dc_pin_);
