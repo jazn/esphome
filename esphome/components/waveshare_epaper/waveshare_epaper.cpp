@@ -2,6 +2,7 @@
 #include "esphome/core/log.h"
 #include "esphome/core/application.h"
 #include "esphome/core/helpers.h"
+#include <esp_task_wdt.h>
 
 namespace esphome {
 namespace waveshare_epaper {
@@ -115,6 +116,7 @@ bool WaveshareEPaper::wait_until_idle_() {
 
   const uint32_t start = millis();
   while (this->busy_pin_->digital_read()) {
+    esp_task_wdt_reset();
     if (millis() - start > this->idle_timeout_()) {
       ESP_LOGE(TAG, "Timeout while displaying image!");
       return false;
