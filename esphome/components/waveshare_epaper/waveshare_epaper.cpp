@@ -496,13 +496,13 @@ void WaveshareEPaper2P66In::initialize() {
 }
 void HOT WaveshareEPaper2P66In::display() {
 
-  ESP_LOGD(TAG, "reset_");
-  if (this->reset_pin_ != nullptr) {
-    this->reset_pin_->digital_write(false);
-    delay(200);  // NOLINT
-    this->reset_pin_->digital_write(true);
-    delay(200);  // NOLINT
-  }
+  // ESP_LOGD(TAG, "reset_");
+  // if (this->reset_pin_ != nullptr) {
+  //   this->reset_pin_->digital_write(false);
+  //   delay(200);  // NOLINT
+  //   this->reset_pin_->digital_write(true);
+  //   delay(200);  // NOLINT
+  // }
 
   const int full_refresh_after = 5;
   bool partial = (no_of_refreshes <= full_refresh_after) && (no_of_refreshes!=0);
@@ -596,18 +596,18 @@ void HOT WaveshareEPaper2P66In::display() {
   this->data(0x27);
   this->data(0x01);
 
-  if(partial && no_of_refreshes!=0) { // refresh old buffer but not first time
-    // Load BW image (152/8*296)(BW)
-    this->command(0x24);
-    // delay(2);
-    for (uint32_t i = 0; i < buf_len; i++) {
-      this->data(old_buffer_[i]);
-    }
-    this->command(0x22);
-    this->data(0xc7); // or 0xcf
-    this->command(0x20);    
-    this->wait_until_idle_(); // Wait for busy low
-  }
+  // if(partial && no_of_refreshes!=0) { // refresh old buffer but not first time
+  //   // Load BW image (152/8*296)(BW)
+  //   this->command(0x24);
+  //   // delay(2);
+  //   for (uint32_t i = 0; i < buf_len; i++) {
+  //     this->data(old_buffer_[i]);
+  //   }
+  //   this->command(0x22);
+  //   this->data(0xc7); // or 0xcf
+  //   this->command(0x20);    
+  //   this->wait_until_idle_(); // Wait for busy low
+  // }
 
   // Load BW image (152/8*296)(BW)
   this->command(0x24);
@@ -627,11 +627,11 @@ void HOT WaveshareEPaper2P66In::display() {
   
   this->wait_until_idle_(); // Wait for busy low
 
-  ESP_LOGD(TAG, "deep_sleep");
+  // ESP_LOGD(TAG, "deep_sleep");
 
-  // Enter deep sleep mode
-  this->command(0x10);
-  this->data(0x01);  // check byte
+  // // Enter deep sleep mode
+  // this->command(0x10);
+  // this->data(0x01);  // check byte
 
   ++no_of_refreshes;
 }
