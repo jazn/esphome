@@ -518,10 +518,10 @@ void HOT WaveshareEPaper2P66In::display() {
 
   if(partial) {
     // Set display size and driver output control
-    this->command(0x01);
-    this->data(0x27);
-    this->data(0x01);
-    this->data(0x00);
+    // this->command(0x01);
+    // this->data(0x27);
+    // this->data(0x01);
+    // this->data(0x00);
   }
 
   // Ram data entry mode
@@ -550,18 +550,18 @@ void HOT WaveshareEPaper2P66In::display() {
     // this->data(0x05);
     this->data(0x80);
 
-    // SET VOLTAGE AND LOAD LUT
-    // Set VCOM value
-    this->command(0x2c);
-    this->data(0x36);
-    // Gate voltage setting
-    this->command(0x03);
-    this->data(0x17);
-    // Source voltage setting
-    this->command(0x04);
-    this->data(0x41);
-    this->data(0x00);
-    this->data(0x32);
+    // // SET VOLTAGE AND LOAD LUT
+    // // Set VCOM value
+    // this->command(0x2c);
+    // this->data(0x36);
+    // // Gate voltage setting
+    // this->command(0x03);
+    // this->data(0x17);
+    // // Source voltage setting
+    // this->command(0x04);
+    // this->data(0x41);
+    // this->data(0x00);
+    // this->data(0x32);
     // Load LUT
     this->command(0x32);
     for (uint8_t i : LUT_WF_PARTIAL_2_66) // 153 btes
@@ -587,14 +587,14 @@ void HOT WaveshareEPaper2P66In::display() {
 
   this->wait_until_idle_(); // Wait for busy low
 
-  // Set Ram X address counter
-  this->command(0x4e);
-  this->data(0x00);
+  // // Set Ram X address counter
+  // this->command(0x4e);
+  // this->data(0x00);
 
-  // Set Ram Y address counter
-  this->command(0x4f);
-  this->data(0x27);
-  this->data(0x01);
+  // // Set Ram Y address counter
+  // this->command(0x4f);
+  // this->data(0x27);
+  // this->data(0x01);
 
   // if(partial && no_of_refreshes!=0) { // refresh old buffer but not first time
   //   // Load BW image (152/8*296)(BW)
@@ -609,6 +609,16 @@ void HOT WaveshareEPaper2P66In::display() {
   //   this->wait_until_idle_(); // Wait for busy low
   // }
 
+  // Image update
+  if(partial) {
+    this->command(0x22);
+    // this->data(0xc7); // or 0xcf
+    this->data(0xcf);
+  }
+  this->command(0x20);
+  
+  this->wait_until_idle_(); // Wait for busy low
+
   // Load BW image (152/8*296)(BW)
   this->command(0x24);
   // delay(2);
@@ -618,11 +628,11 @@ void HOT WaveshareEPaper2P66In::display() {
   }
 
   // Image update
-  if(partial) {
-    this->command(0x22);
-    this->data(0xc7); // or 0xcf
-    // this->data(0xcf);
-  }
+  // if(partial) {
+  //   this->command(0x22);
+  //   // this->data(0xc7); // or 0xcf
+  //   this->data(0xcf);
+  // }
   this->command(0x20);
   
   this->wait_until_idle_(); // Wait for busy low
