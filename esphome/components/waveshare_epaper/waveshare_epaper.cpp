@@ -505,9 +505,9 @@ void HOT WaveshareEPaper2P66In::display() {
   }
 
   const int full_refresh_after = 5;
-  bool partial = no_of_refreshes <= full_refresh_after;
+  bool partial = (no_of_refreshes <= full_refresh_after) && (no_of_refreshes!=0);
   if(no_of_refreshes > full_refresh_after) {
-    no_of_refreshes = 0;
+    no_of_refreshes = 1;
   }
 
   ESP_LOGD(TAG, "initialize");
@@ -596,11 +596,25 @@ void HOT WaveshareEPaper2P66In::display() {
   this->data(0x27);
   this->data(0x01);
 
+  if(partial && no_of_refreshes!=0) { // refresh old buffer but not first time
+    // Load BW image (152/8*296)(BW)
+    this->command(0x24);
+    // delay(2);
+    for (uint32_t i = 0; i < buf_len; i++) {
+      this->data(old_buffer_[i]);
+    }
+    this->command(0x22);
+    this->data(0xc7); // or 0xcf
+    this->command(0x20);    
+    this->wait_until_idle_(); // Wait for busy low
+  }
+
   // Load BW image (152/8*296)(BW)
   this->command(0x24);
   // delay(2);
   for (uint32_t i = 0; i < buf_len; i++) {
     this->data(this->buffer_[i]);
+    old_buffer_[i] = this->buffer_[i];
   }
 
   // Image update

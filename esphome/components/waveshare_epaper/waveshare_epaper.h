@@ -141,6 +141,8 @@ class WaveshareEPaper2P66In : public WaveshareEPaper {
   int no_of_refreshes = 0;
   const int width_ = 152;
   const int height_ = 296;
+  uint8_t old_buffer_[152/8*296];
+
 };
 
 class WaveshareEPaper2P7In : public WaveshareEPaper {
