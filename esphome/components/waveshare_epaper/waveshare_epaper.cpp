@@ -614,8 +614,8 @@ void HOT WaveshareEPaper2P66In::display() {
     this->command(0x22);
     // this->data(0xc7); // or 0xcf
     this->data(0xcf);
+    this->command(0x20);
   }
-  this->command(0x20);
   
   this->wait_until_idle_(); // Wait for busy low
 
