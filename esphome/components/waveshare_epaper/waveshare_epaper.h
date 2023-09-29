@@ -46,7 +46,7 @@ class WaveshareEPaper : public PollingComponent,
   void setup_pins_();
 
   void reset_();
-  // virtual int get_width_controller() { return this->get_width_internal(); };
+  virtual int get_width_controller() { return this->get_width_internal(); };
 
   uint32_t get_buffer_length_();
   uint32_t reset_duration_{200};
