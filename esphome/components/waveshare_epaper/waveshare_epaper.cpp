@@ -3,7 +3,7 @@
 #include "esphome/core/application.h"
 #include "esphome/core/helpers.h"
 #include <cinttypes>
-//#include <esp_task_wdt.h>
+// #include <esp_task_wdt.h>
 
 namespace esphome {
 namespace waveshare_epaper {
