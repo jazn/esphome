@@ -39,15 +39,6 @@ class WaveshareEPaperBase : public display::DisplayBuffer,
 
   void setup_pins_();
 
-  void reset_() {
-    if (this->reset_pin_ != nullptr) {
-      this->reset_pin_->digital_write(false);
-      delay(reset_duration_);  // NOLINT
-      this->reset_pin_->digital_write(true);
-      delay(20);
-    }
-  }
-
   void reset_();
   virtual int get_width_controller() { return this->get_width_internal(); };
 
