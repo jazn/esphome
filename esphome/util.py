@@ -1,13 +1,12 @@
-from typing import Union
-
 import collections
 import io
 import logging
 import os
+from pathlib import Path
 import re
 import subprocess
 import sys
-from pathlib import Path
+from typing import Union
 
 from esphome import const
 
@@ -196,7 +195,7 @@ def run_external_command(
     try:
         sys.argv = list(cmd)
         sys.exit = mock_exit
-        return func() or 0
+        retval = func() or 0
     except KeyboardInterrupt:  # pylint: disable=try-except-raise
         raise
     except SystemExit as err:
@@ -212,9 +211,10 @@ def run_external_command(
         sys.stdout = orig_stdout
         sys.stderr = orig_stderr
 
-        if capture_stdout:
-            # pylint: disable=lost-exception
-            return cap_stdout.getvalue()
+    if capture_stdout:
+        return cap_stdout.getvalue()
+
+    return retval
 
 
 def run_external_process(*cmd, **kwargs):
