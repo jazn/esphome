@@ -635,7 +635,7 @@ uint32_t WaveshareEPaperTypeA::idle_timeout_() {
     0x00,0x00,0x00,0x00,0x22,0x22,0x22,0x22,0x22,0x22,
     0x00,0x00,0x00 // this was in https://github.com/waveshare/e-Paper/blob/master/Arduino/epd2in66/epd2in66.cpp ,0x22,0x17,0x41,0xB0,0x32,0x36,
  };
-void WaveshareEPaper::reset_() {
+void WaveshareEPaperBase::reset_() {
   ESP_LOGD(TAG, "reset_");
 
   if (this->reset_pin_ != nullptr) {
