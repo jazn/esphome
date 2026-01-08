@@ -240,8 +240,11 @@ uint8_t PN7150::reset_core_(const bool reset_config, const bool power) {
     return nfc::STATUS_FAILED;
   }
 
-  ESP_LOGD(TAG, "Configuration %s", rx.get_message()[nfc::NCI_PKT_PAYLOAD_OFFSET + 2] ? "reset" : "retained");
-  ESP_LOGD(TAG, "NCI version: %s", rx.get_message()[nfc::NCI_PKT_PAYLOAD_OFFSET + 1] == 0x20 ? "2.0" : "1.0");
+  ESP_LOGD(TAG,
+           "Configuration %s\n"
+           "NCI version: %s",
+           rx.get_message()[nfc::NCI_PKT_PAYLOAD_OFFSET + 2] ? "reset" : "retained",
+           rx.get_message()[nfc::NCI_PKT_PAYLOAD_OFFSET + 1] == 0x20 ? "2.0" : "1.0");
 
   return nfc::STATUS_OK;
 }
@@ -266,11 +269,13 @@ uint8_t PN7150::init_core_() {
   uint8_t flash_major_version = rx.get_message()[18 + rx.get_message()[8]];
   uint8_t flash_minor_version = rx.get_message()[19 + rx.get_message()[8]];
 
-  ESP_LOGD(TAG, "Manufacturer ID: 0x%02X", manf_id);
-  ESP_LOGD(TAG, "Hardware version: 0x%02X", hw_version);
-  ESP_LOGD(TAG, "ROM code version: 0x%02X", rom_code_version);
-  ESP_LOGD(TAG, "FLASH major version: 0x%02X", flash_major_version);
-  ESP_LOGD(TAG, "FLASH minor version: 0x%02X", flash_minor_version);
+  ESP_LOGD(TAG,
+           "Manufacturer ID: 0x%02X\n"
+           "Hardware version: 0x%02X\n"
+           "ROM code version: 0x%02X\n"
+           "FLASH major version: 0x%02X\n"
+           "FLASH minor version: 0x%02X",
+           manf_id, hw_version, rom_code_version, flash_major_version, flash_minor_version);
 
   return rx.get_simple_status_response();
 }
@@ -584,7 +589,7 @@ void PN7150::nci_fsm_transition_() {
       } else {
         this->nci_fsm_set_state_(NCIState::NFCC_INIT);
       }
-      // fall through
+      [[fallthrough]];
 
     case NCIState::NFCC_INIT:
       if (this->init_core_() != nfc::STATUS_OK) {
@@ -594,7 +599,7 @@ void PN7150::nci_fsm_transition_() {
       } else {
         this->nci_fsm_set_state_(NCIState::NFCC_CONFIG);
       }
-      // fall through
+      [[fallthrough]];
 
     case NCIState::NFCC_CONFIG:
       if (this->send_init_config_() != nfc::STATUS_OK) {
@@ -605,7 +610,7 @@ void PN7150::nci_fsm_transition_() {
         this->config_refresh_pending_ = false;
         this->nci_fsm_set_state_(NCIState::NFCC_SET_DISCOVER_MAP);
       }
-      // fall through
+      [[fallthrough]];
 
     case NCIState::NFCC_SET_DISCOVER_MAP:
       if (this->set_discover_map_() != nfc::STATUS_OK) {
@@ -615,7 +620,7 @@ void PN7150::nci_fsm_transition_() {
       } else {
         this->nci_fsm_set_state_(NCIState::NFCC_SET_LISTEN_MODE_ROUTING);
       }
-      // fall through
+      [[fallthrough]];
 
     case NCIState::NFCC_SET_LISTEN_MODE_ROUTING:
       if (this->set_listen_mode_routing_() != nfc::STATUS_OK) {
@@ -625,7 +630,7 @@ void PN7150::nci_fsm_transition_() {
       } else {
         this->nci_fsm_set_state_(NCIState::RFST_IDLE);
       }
-      // fall through
+      [[fallthrough]];
 
     case NCIState::RFST_IDLE:
       if (this->nci_state_error_ == NCIState::RFST_DISCOVERY) {
@@ -650,14 +655,14 @@ void PN7150::nci_fsm_transition_() {
 
     case NCIState::RFST_W4_HOST_SELECT:
       select_endpoint_();
-      // fall through
+      [[fallthrough]];
 
     // All cases below are waiting for NOTIFICATION messages
     case NCIState::RFST_DISCOVERY:
       if (this->config_refresh_pending_) {
         this->refresh_core_config_();
       }
-      // fall through
+      [[fallthrough]];
 
     case NCIState::RFST_LISTEN_ACTIVE:
     case NCIState::RFST_LISTEN_SLEEP:
@@ -830,7 +835,7 @@ void PN7150::process_rf_intf_activated_oid_(nfc::NciMessage &rx) {  // an endpoi
 
     switch (this->next_task_) {
       case EP_CLEAN:
-        ESP_LOGD(TAG, "  Tag cleaning...");
+        ESP_LOGD(TAG, "  Tag cleaning");
         if (this->clean_endpoint_(working_endpoint.tag->get_uid()) != nfc::STATUS_OK) {
           ESP_LOGE(TAG, "  Tag cleaning incomplete");
         }
@@ -838,7 +843,7 @@ void PN7150::process_rf_intf_activated_oid_(nfc::NciMessage &rx) {  // an endpoi
         break;
 
       case EP_FORMAT:
-        ESP_LOGD(TAG, "  Tag formatting...");
+        ESP_LOGD(TAG, "  Tag formatting");
         if (this->format_endpoint_(working_endpoint.tag->get_uid()) != nfc::STATUS_OK) {
           ESP_LOGE(TAG, "Error formatting tag as NDEF");
         }
@@ -847,8 +852,8 @@ void PN7150::process_rf_intf_activated_oid_(nfc::NciMessage &rx) {  // an endpoi
 
       case EP_WRITE:
         if (this->next_task_message_to_write_ != nullptr) {
-          ESP_LOGD(TAG, "  Tag writing...");
-          ESP_LOGD(TAG, "  Tag formatting...");
+          ESP_LOGD(TAG, "  Tag writing\n"
+                        "  Tag formatting");
           if (this->format_endpoint_(working_endpoint.tag->get_uid()) != nfc::STATUS_OK) {
             ESP_LOGE(TAG, "  Tag could not be formatted for writing");
           } else {

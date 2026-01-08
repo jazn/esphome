@@ -8,8 +8,7 @@
 #include "esphome/components/sensor/sensor.h"
 #include "mqtt_component.h"
 
-namespace esphome {
-namespace mqtt {
+namespace esphome::mqtt {
 
 class MQTTSensorComponent : public mqtt::MQTTComponent {
  public:
@@ -46,14 +45,12 @@ class MQTTSensorComponent : public mqtt::MQTTComponent {
   /// Override for MQTTComponent, returns "sensor".
   std::string component_type() const override;
   const EntityBase *get_entity() const override;
-  std::string unique_id() override;
 
   sensor::Sensor *sensor_;
   optional<uint32_t> expire_after_;  // Override the expire after advertised to Home Assistant
 };
 
-}  // namespace mqtt
-}  // namespace esphome
+}  // namespace esphome::mqtt
 
 #endif
 #endif  // USE_MQTT
