@@ -30,7 +30,7 @@ WaveshareEPaperTypeA = waveshare_epaper_ns.class_(
 )
 WaveshareEPaper2P66In = waveshare_epaper_ns.class_(
     "WaveshareEPaper2P66In", WaveshareEPaper
-}
+)
 WaveshareEpaper1P54INBV2 = waveshare_epaper_ns.class_(
     "WaveshareEPaper1P54InBV2", WaveshareEPaperBWR
 )
